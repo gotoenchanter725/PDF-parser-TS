@@ -1,0 +1,79 @@
+<html>
+  <body>
+    <h1>Playground for testing pdf-parser</h1>
+
+    <form id="form" method="POST" enctype="multipart/form-data">
+      <label for="apiUrl">API Url Override</label><br />
+      <input
+        type="text"
+        name="apiUrl"
+        id="apiUrl"
+        placeholder="http://localhost:8080"
+      /><br /><br />
+      <input type="radio" id="fountain" name="format" value="fdx" checked />
+      <label for="fountain">Fountain</label><br />
+      <input type="radio" id="json" name="format" value="json" />
+      <label for="json">JSON</label><br />
+
+      <br />
+      <label>Upload a <code>.pdf</code> file</label><br />
+      <input id="fileInput" type="file" name="script" />
+      <br />
+      <br />
+      <button id="submit" type="submit">Import</button>
+    </form>
+  </body>
+</html>
+
+<script>
+  const form = document.getElementById("form");
+  const fileInput = document.querySelector("#fileInput");
+  const localUrl = "http://localhost:8080";
+  let file = null;
+
+  const handleSubmit = (e) => {
+    const urlInput = document.querySelector("#apiUrl");
+    let apiUrl = localUrl;
+    // console.log({ urlInput }, urlInput.target.value);
+
+    const request = new XMLHttpRequest();
+    const formData = new FormData();
+    const htmlFormData = new FormData(form);
+
+    for (let item of htmlFormData) {
+      const [field, value] = item;
+      if (field === "apiUrl") {
+        apiUrl = value;
+      } else {
+        formData.append(field, value);
+      }
+    }
+
+    request.onreadystatechange = () => {
+      if (request.readyState === 4 && request.status === 200) {
+        alert("Converted!");
+      }
+    };
+
+    let API_ENDPOINT = `${apiUrl}/convert_script`;
+    console.log({ API_ENDPOINT });
+    request.open("POST", API_ENDPOINT, true);
+
+    //build form data
+    formData.append("ext", "pdf");
+    formData.append("agree_tou", "true");
+    formData.append("download", "true");
+
+    request.send(formData);
+
+    e.preventDefault();
+  };
+
+  window.onload = function () {
+    //when the document is finished loading, replace everything
+    //between the <a ...> </a> tags with the value of splitText
+    document.getElementById("apiUrl").value = localUrl;
+  };
+
+  form.addEventListener("submit", handleSubmit, false);
+</script>

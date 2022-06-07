@@ -1,0 +1,16 @@
+node_modules
+.idea
+.env
+scratch.*
+
+npm-debug.log
+private_backendgeneral.log
+*.log
+logs/*
+
+output.*
+uploads/*
+outputs/*
+!uploads/.gitkeep
+!outputs/.gitkeep
+!logs/.gitkeep

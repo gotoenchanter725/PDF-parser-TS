@@ -1,0 +1,17 @@
+node_modules
+.gitignore
+.idea
+
+npm-debug.log
+private_backendgeneral.log
+*.log
+logs/*
+
+scratch.*
+example.*
+output.*
+outputs/*
+uploads/*
+tests/*
+
+README.md
