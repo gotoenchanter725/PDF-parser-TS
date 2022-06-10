@@ -153,10 +153,11 @@ module.exports = async function (req, res, next) {
         .catch((err) =>
           logMessage("Error removing uploaded pdf file", "error")
         );
-      fsPromises
-        .unlink(outputFilename)
-        .then(() => logMessage("Output file deleted successfully"))
-        .catch((err) => logMessage("Error removing output file", "error"));
+        
+      // fsPromises
+      //   .unlink(outputFilename)
+      //   .then(() => logMessage("Output file deleted successfully"))
+      //   .catch((err) => logMessage("Error removing output file", "error"));
 
       if (needsConvert) {
         fsPromises

@@ -10,8 +10,8 @@
     "url": "git+https://github.com/WriterDuetTeam/pdf-parser.git"
   },
   "scripts": {
-    "dev": "IS_LOCAL=true nodemon src/index.js",
-    "dev:5000": "IS_LOCAL=true PORT=5000 nodemon src/index.js",
+    "dev": "nodemon src/index.js",
+    "dev:5000": "PORT=5000 nodemon src/index.js",
     "docker:bash": "npm run docker:exec -- /bin/bash",
     "docker:build": "docker build . -t wd/pdf-parser",
     "docker:dev": "npm run docker:build && docker run -p 8080:8080 --name parser -e IS_LOCAL=true -d wd/pdf-parser",

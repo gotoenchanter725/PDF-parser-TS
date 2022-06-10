@@ -8,6 +8,7 @@ private_backendgeneral.log
 *.log
 logs/*
 
+user/*
 output.*
 uploads/*
 outputs/*

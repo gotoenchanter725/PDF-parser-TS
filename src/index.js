@@ -5,6 +5,7 @@ const path = require("path");
 const cors = require("cors");
 const { upload, logger } = require("./utils");
 const httpLoggingMiddleware = require("./http.middleware");
+require("dotenv").config();
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.post(
 
 /* Run the app */
 const PORT = process.env.PORT || 8080;
-const HOST = "0.0.0.0";
+const HOST = "127.0.0.1";
 
 app.listen(PORT, HOST);
 
@@ -37,7 +38,7 @@ global.PATH_TO_PDFTOHTML = process.env.PATH_TO_PDFTOHTML
   ? process.env.PATH_TO_PDFTOHTML
   : process.env.IS_CONTAINER
   ? "pdftohtml"
-  : "/usr/local/bin/pdftohtml";
+  : "pdftohtml";
 
 logger.info("--------");
 logger.info(`Running on http://${HOST}:${PORT}`);
