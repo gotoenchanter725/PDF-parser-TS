@@ -1,12 +1,16 @@
-const path = require("path");
+import * as path from "path";
+import * as fs from "fs";
+import * as randomString from "randomstring";
+import { Request, Response, NextFunction } from "express";
+import { RestFile, FileInterface, FormatsType } from "./interface";
+
+const { FormData } = require("form-data");
 const fsPromises = require("fs").promises;
-const fs = require("fs");
-const randomString = require("randomstring");
 const { execAsync, logger } = require("./utils");
 const axios = require("axios");
-var FormData = require("form-data");
 
-const formats = {
+
+const formats: FormatsType = {
   fdx: {
     flag: "--fountain",
     extension: ".fountain",
@@ -17,12 +21,13 @@ const formats = {
   },
 };
 
+
 // generate random file name
-function generateFileName() {
+function generateFileName(): string {
   return randomString.generate(8);
 }
 
-async function convertFileToPDF(file) {
+async function convertFileToPDF(file: FileInterface) {
   var formData = new FormData();
 
   formData.append("format", "pdf");
@@ -41,29 +46,30 @@ async function convertFileToPDF(file) {
           },
         }
       )
-      .then(async (res) => {
+      .then(async (res: RestFile) => {
         let newPDFFilePath = "./uploads/" + generateFileName() + ".pdf";
 
         await fs.createWriteStream(newPDFFilePath).write(res.data, async () => {
           resolve(newPDFFilePath);
         });
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log(err);
         resolve("ERROR");
       });
   });
 }
 
-module.exports = async function (req, res, next) {
-  const { file, body, rawBody, files } = req;
-  const { format, needsConvert } = body;
-
-  function logMessage(message) {
+module.exports = async function (req: Request, res: Response, next: NextFunction) {
+  var file: FileInterface = req.file;
+  const body = req.body;
+  const format = body.format;
+  const needsConvert = body.needsConvert;
+  function logMessage(message: string) {
     return logger.info(`[${file.filename.replace(".pdf", "")}]: ${message}`);
   }
 
-  const fileSizeMB = convertBytesToMb(file.size);
+  const fileSizeMB: string = convertBytesToMb(file.size);
 
   logMessage(`Attempting to convert ${fileSizeMB} MB file`);
 
@@ -82,19 +88,18 @@ module.exports = async function (req, res, next) {
   }
 
   // 20MB seems to be a common limit on upload
-  if (fileSizeMB > 20) {
+  if (+ fileSizeMB > 20) {
     return res.status(413).send("File size cannot exceed 20MB");
   }
 
-  const outputFilename = `outputs/${
-    generateFileName() + formats[format]["extension"]
-  }`;
-  let originalFilePath = file.path;
+  const outputFilename: string = `outputs/${generateFileName() + formats[format]["extension"]}`;
+  let originalFilePath: string = file.path;
 
   if (needsConvert) {
-    file.path = await convertFileToPDF(file);
 
-    if (file.path == "ERROR") {
+    var temp = await convertFileToPDF(file);
+
+    if (temp == "ERROR") {
       fsPromises
         .unlink(originalFilePath)
         .then(() => {
@@ -103,16 +108,11 @@ module.exports = async function (req, res, next) {
             .status(415)
             .send("Conversion of this file type to PDF failed.");
         })
-        .catch((err) => {
-          logMessage(
-            "Error removing original file path (for non PDFs)",
-            "error"
-          );
+        .catch((err: Error) => {
+          logMessage("Error removing original file path (for non PDFs)");
           return res
             .status(415)
-            .send(
-              "Conversion of this file type to PDF failed (And it failed at deleting the file from the server)."
-            );
+            .send("Conversion of this file type to PDF failed (And it failed at deleting the file from the server).");
         });
     }
   }
@@ -120,9 +120,7 @@ module.exports = async function (req, res, next) {
   try {
     // convert the pdf file to desired output
 
-    await execAsync(
-      `npm run parse -- ${formats[format]["flag"]} outputFilename=${outputFilename} pdftohtml=${PATH_TO_PDFTOHTML} ${file.path}`
-    );
+    await execAsync(`npm run parse -- ${formats[format]["flag"]} outputFilename=${outputFilename} pdftohtml=${globalThis.PATH_TO_PDFTOHTML} ${file.path}`);
 
     res.sendFile(path.join(__dirname, `../${outputFilename}`));
 
@@ -131,17 +129,9 @@ module.exports = async function (req, res, next) {
       path.join(__dirname, `../${outputFilename}`)
     );
 
-    logMessage(
-      `Successfully output a ${data.size} byte file converted in ${
-        Date.now() - startTime
-      } ms`
-    );
+    logMessage(`Successfully output a ${data.size} byte file converted in ${Date.now() - startTime} ms`);
   } catch (err) {
-    logMessage(
-      `Error parsing ${fileSizeMB} MB file after ${Date.now() - startTime} ms`,
-      { error: JSON.stringify(err.stack) },
-      "error"
-    );
+    logMessage(`Error parsing ${fileSizeMB} MB file after ${Date.now() - startTime} ms`);
 
     next(err);
   } finally {
@@ -149,33 +139,34 @@ module.exports = async function (req, res, next) {
     setTimeout(() => {
       fsPromises
         .unlink(file.path)
-        .then(() => logMessage("Original pdf deleted successfully"))
-        .catch((err) =>
-          logMessage("Error removing uploaded pdf file", "error")
+        .then(() => {
+          logMessage("Original pdf deleted successfully")
+        })
+        .catch((err: Error) => {
+          logMessage("Error removing uploaded pdf file")
+        }
         );
-        
+
       // fsPromises
       //   .unlink(outputFilename)
       //   .then(() => logMessage("Output file deleted successfully"))
-      //   .catch((err) => logMessage("Error removing output file", "error"));
+      //   .catch((err) => logMessage("Error removing output file"));
 
       if (needsConvert) {
         fsPromises
           .unlink(originalFilePath)
-          .then(() =>
+          .then(() => {
             logMessage("Original file path (for non PDFs) deleted successfully")
-          )
-          .catch((err) =>
-            logMessage(
-              "Error removing original file path (for non PDFs)",
-              "error"
-            )
+          }).catch((err: Error) => {
+            logMessage("Error removing original file path (for non PDFs)")
+          }
           );
       }
     }, 0);
   }
 };
 
-function convertBytesToMb(bytes) {
-  return (Number(bytes) / 1000000).toFixed(3);
+function convertBytesToMb(bytes: number): string {
+  var tmp: number = bytes / 1000000;
+  return tmp.toFixed(3);
 }

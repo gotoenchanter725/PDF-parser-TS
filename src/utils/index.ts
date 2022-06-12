@@ -1,6 +1,6 @@
-const { exec } = require("child_process");
-const multer = require("multer");
-const path = require("path");
+import * as path from "path";
+import { exec } from "child_process";
+import * as multer from "multer";
 
 /**
  * Executes a shell command and return it as a Promise.
@@ -8,7 +8,7 @@ const path = require("path");
  * @param cmd {string}
  * @return {Promise<string>}
  */
-exports.execAsync = async function (cmd) {
+exports.execAsync = async function (cmd: string): Promise<string> {
   return new Promise((resolve, reject) => {
     exec(cmd, (error, stdout, stderr) => {
       if (error) {

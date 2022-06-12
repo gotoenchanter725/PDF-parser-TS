@@ -2,7 +2,7 @@
   "name": "pdf-parser",
   "version": "1.0.0",
   "description": "Convert pdf files to WD formats",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "author": "",
   "license": "ISC",
   "repository": {
@@ -10,8 +10,9 @@
     "url": "git+https://github.com/WriterDuetTeam/pdf-parser.git"
   },
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "dev:5000": "PORT=5000 nodemon src/index.js",
+    "dev": "ts-node src/index.ts",
+    "dev1": "nodemon src/index1.ts",
+    "dev:5000": "PORT=5000 nodemon src/index.ts",
     "docker:bash": "npm run docker:exec -- /bin/bash",
     "docker:build": "docker build . -t wd/pdf-parser",
     "docker:dev": "npm run docker:build && docker run -p 8080:8080 --name parser -e IS_LOCAL=true -d wd/pdf-parser",
@@ -31,7 +32,7 @@
     "local:parse:fountain:example": "php src/parser/analyzer/TestParser.php --fountain pdftohtml=/usr/local/bin/pdftohtml example.pdf",
     "local:parse:json:example": "php src/parser/analyzer/TestParser.php --json pdftohtml=/usr/local/bin/pdftohtml example.pdf",
     "parse": "php src/parser/analyzer/TestParser.php",
-    "start": "node src/index.js",
+    "start": "node src/index.ts",
     "test:load": "node tests/load.js"
   },
   "dependencies": {
@@ -46,7 +47,15 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@types/async": "^3.2.13",
+    "@types/body-parser": "^1.19.2",
+    "@types/cors": "^2.8.12",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.42",
     "nodemon": "^2.0.14",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3"
   }
 }

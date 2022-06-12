@@ -1,5 +1,5 @@
 // https://github.com/winstonjs/winston/blob/master/examples/quick-start.js
-const { createLogger, format, transports, config } = require("winston");
+import { createLogger, format, transports, config } from "winston";
 
 const fileLogFormat = format.combine(
   format.timestamp({

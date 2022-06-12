@@ -1,13 +1,11 @@
-"use strict";
-
-const express = require("express");
-const path = require("path");
-const cors = require("cors");
+import * as express from 'express';
+import { Request, Response } from 'express';
+const cors = require ("cors");
 const { upload, logger } = require("./utils");
 const httpLoggingMiddleware = require("./http.middleware");
 require("dotenv").config();
 
-const app = express();
+const app: express.Application = express();
 
 app.use(cors()); // Is this needed? Test without in GCR simulator with request from different port
 
@@ -16,7 +14,7 @@ app.use(express.json());
 app.use(httpLoggingMiddleware);
 
 /* Routes */
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(200).send("OK");
 });
 
@@ -29,16 +27,16 @@ app.post(
 );
 
 /* Run the app */
-const PORT = process.env.PORT || 8080;
-const HOST = "127.0.0.1";
+const PORT: any = process.env.PORT || 8080;
+const HOST: string = "127.0.0.1";
 
 app.listen(PORT, HOST);
-
-global.PATH_TO_PDFTOHTML = process.env.PATH_TO_PDFTOHTML
+// declare var PATH_TO_PDFTOHTML: string;
+globalThis.PATH_TO_PDFTOHTML = process.env.PATH_TO_PDFTOHTML
   ? process.env.PATH_TO_PDFTOHTML
   : process.env.IS_CONTAINER
-  ? "pdftohtml"
-  : "pdftohtml";
+    ? "pdftohtml"
+    : "pdftohtml";
 
 logger.info("--------");
 logger.info(`Running on http://${HOST}:${PORT}`);
