@@ -32,7 +32,7 @@
     "local:parse:fountain:example": "php src/parser/analyzer/TestParser.php --fountain pdftohtml=/usr/local/bin/pdftohtml example.pdf",
     "local:parse:json:example": "php src/parser/analyzer/TestParser.php --json pdftohtml=/usr/local/bin/pdftohtml example.pdf",
     "parse": "php src/parser/analyzer/TestParser.php",
-    "start": "node src/index.ts",
+    "start": "ts-node src/index.ts",
     "test:load": "node tests/load.js"
   },
   "dependencies": {
