@@ -4,6 +4,11 @@ import * as randomString from "randomstring";
 import { Request, Response, NextFunction } from "express";
 import { RestFile, FileInterface, FormatsType } from "./interface";
 
+interface RequestType {
+  req: Request, 
+
+}
+
 const { FormData } = require("form-data");
 const fsPromises = require("fs").promises;
 const { execAsync, logger } = require("./utils");
@@ -61,7 +66,7 @@ async function convertFileToPDF(file: FileInterface) {
 }
 
 module.exports = async function (req: Request, res: Response, next: NextFunction) {
-  var file: FileInterface = req.file;
+  var file: FileInterface = req["file"];
   const body = req.body;
   const format = body.format;
   const needsConvert = body.needsConvert;
