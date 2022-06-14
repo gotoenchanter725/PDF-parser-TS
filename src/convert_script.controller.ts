@@ -142,15 +142,15 @@ module.exports = async function (req: Request, res: Response, next: NextFunction
   } finally {
     // delete the input and output files - need to wait to avoid several potential issues
     setTimeout(() => {
-      fsPromises
-        .unlink(file.path)
-        .then(() => {
-          logMessage("Original pdf deleted successfully")
-        })
-        .catch((err: Error) => {
-          logMessage("Error removing uploaded pdf file")
-        }
-        );
+      // fsPromises
+      //   .unlink(file.path)
+      //   .then(() => {
+      //     logMessage("Original pdf deleted successfully")
+      //   })
+      //   .catch((err: Error) => {
+      //     logMessage("Error removing uploaded pdf file")
+      //   }
+      //   );
 
       // fsPromises
       //   .unlink(outputFilename)
