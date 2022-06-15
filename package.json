@@ -33,7 +33,7 @@
     "local:parse:json:example": "php src/parser/analyzer/TestParser.php --json pdftohtml=/usr/local/bin/pdftohtml example.pdf",
     "parse": "php src/parser/analyzer/TestParser.php",
     "start": "ts-node src/index.ts",
-    "test:load": "node tests/load.js"
+    "test:load": "ts-node tests/load.ts"
   },
   "dependencies": {
     "axios": "^0.27.2",

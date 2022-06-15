@@ -11,7 +11,7 @@ const { Cluster } = require("puppeteer-cluster");
   });
 
   // Print errors to console
-  cluster.on("taskerror", (err, data) => {
+  cluster.on("taskerror", (err: Error, data) => {
     console.log(`Error crawling ${data}: ${err.message}`);
   });
 
